@@ -2,7 +2,6 @@ import random
 import sys
 
 
-
 class BlackBoxEnvironment:
     # problem data
     dimension = 0
@@ -18,8 +17,7 @@ class BlackBoxEnvironment:
     probWrongMove = 0.0
 
     # possile actions
-    actions = ["UP","DOWN","RIGHT","LEFT"]
-
+    actions = ["UP", "DOWN", "RIGHT", "LEFT"]
 
     def __init__(self, n, seed, correctProb):
 
@@ -32,16 +30,15 @@ class BlackBoxEnvironment:
         initialCarRow = 0
 
         for c in range(self.dimension):
-            if (self.maze[0][c] == 1): # the car
+            if (self.maze[0][c] == 1):  # the car
                 self.initialCarColumn = c
-                break # exiting the loop
+                break  # exiting the loop
 
-        self.probWrongMove = (1.0 - correctProb)/3.0
-        self.probCorrectMove = 1.0 - 3.0*self.probWrongMove
+        self.probWrongMove = (1.0 - correctProb) / 3.0
+        self.probCorrectMove = 1.0 - 3.0 * self.probWrongMove
 
         self.localReward = -1.0
-        self.finalReward = 2.0*self.dimension
-
+        self.finalReward = 2.0 * self.dimension
 
     # access methods
 
@@ -55,7 +52,7 @@ class BlackBoxEnvironment:
 
         # check if a given position (cell) corresponds to a final state or not
 
-        if (row == self.dimension-1):
+        if (row == self.dimension - 1):
             return True
         else:
             return False
@@ -63,11 +60,10 @@ class BlackBoxEnvironment:
     def getReward(self, row, column):
         # check if a given position (cell) corresponds to a final state or not
 
-        if (row == self.dimension-1):
+        if (row == self.dimension - 1):
             return self.finalReward
         else:
             return self.localReward
-
 
     def _getProblemInstance(self, n, nCars, seed):
 
@@ -79,11 +75,11 @@ class BlackBoxEnvironment:
         random.seed(seed)
 
         # number of walls
-        nWalls = int(n * (n-2) * 0.2)
+        nWalls = int(n * (n - 2) * 0.2)
 
         # placing walls
         for i in range(nWalls):
-            self.maze[random.randint(0,n-3) + 1][random.randint(0,n-1)] = -1
+            self.maze[random.randint(0, n - 3) + 1][random.randint(0, n - 1)] = -1
 
         # placing cars, labelled as 1, 2, ..., nCars
         if (nCars > n):
@@ -93,8 +89,8 @@ class BlackBoxEnvironment:
         list = [i for i in range(n)]
 
         for c in range(nCars):
-            idx = random.randint(0, len(list)-1)
-            self.maze[0][list[idx]] = c+1
+            idx = random.randint(0, len(list) - 1)
+            self.maze[0][list[idx]] = c + 1
             list.pop(idx)
 
         return self.maze
@@ -112,24 +108,22 @@ class BlackBoxEnvironment:
             next[a][1] = column
 
             # accion UP
-            if (self.actions[a] == "UP") and (row > 0) and (self.maze[row-1][column] >= 0):
-                next[a][0] = row-1
+            if (self.actions[a] == "UP") and (row > 0) and (self.maze[row - 1][column] >= 0):
+                next[a][0] = row - 1
 
             # accion DOWN
-            if (self.actions[a] == "DOWN") and (row < (self.dimension-1)) and (self.maze[row+1][column] >= 0):
-                next[a][0] = row+1
+            if (self.actions[a] == "DOWN") and (row < (self.dimension - 1)) and (self.maze[row + 1][column] >= 0):
+                next[a][0] = row + 1
 
             # accion RIGHT
-            if (self.actions[a] == "RIGHT") and (column < (self.dimension-1)) and (self.maze[row][column+1] >= 0):
-                next[a][1] = column+1
+            if (self.actions[a] == "RIGHT") and (column < (self.dimension - 1)) and (self.maze[row][column + 1] >= 0):
+                next[a][1] = column + 1
 
             # accion LEFT
-            if (self.actions[a] == "LEFT") and (column > 0) and (self.maze[row][column-1] >= 0):
-                next[a][1] = column-1
+            if (self.actions[a] == "LEFT") and (column > 0) and (self.maze[row][column - 1] >= 0):
+                next[a][1] = column - 1
 
         return next
-
-
 
     def _getActionIndex(self, action):
         '''
@@ -141,7 +135,6 @@ class BlackBoxEnvironment:
                 return i
 
         return -1  # error: not possible action
-
 
     def applyAction(self, row, column, action):
         '''
@@ -173,7 +166,7 @@ class BlackBoxEnvironment:
 
             accProbs[i] = acc
 
-        accProbs[len(self.actions)-1] = 1.0 # to avoid round errors
+        accProbs[len(self.actions) - 1] = 1.0  # to avoid round errors
 
         r = random.random()
 
@@ -186,7 +179,7 @@ class BlackBoxEnvironment:
 
         outcome.add(next[move][0])
         outcome.add(next[move][1])
-        if (self.isGoal(next[move][0],next[move][1])):
+        if (self.isGoal(next[move][0], next[move][1])):
             outcome.add(self.finalReward)
         else:
             outcome.add(self.localReward)
@@ -200,7 +193,7 @@ class BlackBoxEnvironment:
         n = len(self.maze)
 
         # upper row
-        print("-"*n, end='')
+        print("-" * n, end='')
         print("--")
 
         # maze content (by row)
@@ -216,6 +209,5 @@ class BlackBoxEnvironment:
             print("|")
 
         # lowe row
-        print("-"*n, end='')
+        print("-" * n, end='')
         print("--")
-
