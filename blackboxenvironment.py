@@ -1,5 +1,6 @@
 import random
 import sys
+from auxMethods import *
 
 
 class BlackBoxEnvironment:
@@ -143,7 +144,7 @@ class BlackBoxEnvironment:
          Receives:
            The current cell (row,column)
            The action to be applied (UP,DOWN,RIGHT,LEFT)
-           An initialised random number generator.
+           An initialised random number generator. (no)
 
          Returns an ArrayList with three objects:
            index=0: row of the obtained cell (int)
@@ -177,12 +178,12 @@ class BlackBoxEnvironment:
                 move = i
                 break
 
-        outcome.add(next[move][0])
-        outcome.add(next[move][1])
+        outcome.append(next[move][0])
+        outcome.append(next[move][1])
         if (self.isGoal(next[move][0], next[move][1])):
-            outcome.add(self.finalReward)
+            outcome.append(self.finalReward)
         else:
-            outcome.add(self.localReward)
+            outcome.append(self.localReward)
 
         return outcome
 
@@ -211,3 +212,19 @@ class BlackBoxEnvironment:
         # lowe row
         print("-" * n, end='')
         print("--")
+
+    """EXTRA METHODS"""
+    def printSolution(self, policy):
+        print("Mejor Solución: ")
+        position = (self.initialCarRow, self.initialCarColumn)
+        path = []
+        path.append(position)
+        while (not self.isGoal(position[0], position[1])):
+            position = getNextState(position, policy[position])     #getNextState from auxMethods
+            path.append(position)
+
+        for pos in path:
+            print(str(pos) + ", " + policy[pos])
+
+
+
