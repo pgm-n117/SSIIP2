@@ -215,7 +215,7 @@ class BlackBoxEnvironment:
 
     """EXTRA METHODS"""
 
-    def valueIterationEvaluationPolicy(self, policy, nEvaluations):
+    def policyEvaluation(self, policy, nEvaluations):
         policyEvaluation = 0.0
         for i in range(nEvaluations):
             row = self.initialCarRow

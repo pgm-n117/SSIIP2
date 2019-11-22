@@ -1,17 +1,14 @@
-
+from time import time
 from blackboxenvironment import *
 from auxMethods import *
 
-global policy         #Diccionario para la política, {pareja estado(x,y) : acción}
-global utilities      #Diccionario de utilidades, {pareja estado(x,y) : utilidad}
-
-
-
-
 def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
+
+    policy = dict()     # Diccionario para la política, {pareja estado(x,y) : acción}
+    utilities = dict()  # Diccionario de utilidades, {pareja estado(x,y) : utilidad}
+
     nIteration = 0
-    policy = dict()
-    utilities = dict()
+
     '''
     Inicializamos la politica inicial (aleatoria) y las utilidades iniciales 
     (0.0 para todos los casos excepto los estados finales, que tienen su recompensa)
@@ -31,12 +28,15 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
                     policy.update({(i, j): environment.getActions()[random.randrange(4)]})
                     utilities.update({(i, j): 0.0})
 
-    printPolicy(policy, ProbSize)
-    printUtils(utilities, ProbSize)
+    #Imprime el estado inicial del problema
+    #printPolicy(policy, ProbSize)
+    #printUtils(utilities, ProbSize)
 
     '''
     Algoritmo de iteración de valores
     '''
+    learningTime = time()
+
     while (delta > convergencia):
 
         auxPolicy = policy.copy()
@@ -81,21 +81,22 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
         diff = evalTotalUtilities(utilities, auxUtilities)
         if (diff < delta):
             delta = diff
-            print("Delta: %.5f" % (delta))
+            #print("Delta: %.5f" % (delta))
 
         nIteration +=1
 
         policy = auxPolicy.copy()
         utilities = auxUtilities.copy()
 
-
+    learningTime = time() - learningTime
     print("Numero de iteraciones: "+ str(nIteration))
+    print("Tiempo de aprendizaje: "+ str(learningTime))
     printPolicy(policy, ProbSize)
     printUtils(utilities, ProbSize)
 
 
     #Final Policy Evaluation:
-    environment.valueIterationEvaluationPolicy(policy, 10000)
+    environment.policyEvaluation(policy, 10000)
 
 
     return 0

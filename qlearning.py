@@ -1,4 +1,4 @@
-
+from time import time
 from blackboxenvironment import *
 from auxMethods import *
 
@@ -8,9 +8,9 @@ from auxMethods import *
 def qLearning(ProbSize, seed, correctProb, alpha, gamma, iterations):
     nIteration = 0
 
-    global policy  # Diccionario para la política, {pareja estado(x,y) : acción}
-    global utilities  # Diccionario de utilidades, {pareja estado(x,y) : utilidad}
-    global qTable  # Diccionario de la QTabla para el algoritmo {pareja estado(x,y) : {accion : utilidad}}
+    policy = dict() # Diccionario para la política, {pareja estado(x,y) : acción}
+    utilities = dict()  # Diccionario de utilidades, {pareja estado(x,y) : utilidad}
+    qTable = dict()  # Diccionario de la QTabla para el algoritmo {pareja estado(x,y) : {accion : utilidad}}
 
     qTable = {}
 
@@ -19,9 +19,10 @@ def qLearning(ProbSize, seed, correctProb, alpha, gamma, iterations):
     '''
     Algoritmo QLearning
     '''
+    learningTime = time()
     while (nIteration < iterations):
 
-
+        nIteration += 1
         state = (0, environment.getInitialCarColumn())
 
         while(not environment.isGoal(state[0], state[1])):
@@ -46,20 +47,25 @@ def qLearning(ProbSize, seed, correctProb, alpha, gamma, iterations):
 
             reward = environment.getReward(state[0], state[1])
 
-            qTable[state][action] = (1-alpha)*qTable[state][action]+alpha*(reward + gamma*nextQValue)
+            #Alpha con decaimiento
+            #alphaValue = alpha*(100.0/nIteration)
+            qTable[state][action] = (1 - alpha) * qTable[state][action] + alpha * (reward + gamma * nextQValue)
 
-            state = (newState[0],newState[1])
-
-        nIteration+=1
+            state = (newState[0], newState[1])
 
 
-    generatePolicy(ProbSize)
+    learningTime = time() - learningTime
+    print("Tiempo de aprendizaje: "+ str(learningTime))
+
+    policy = generatePolicy(qTable, ProbSize)
+    environment.policyEvaluation(policy, 10000)
+
 
 
     return 0
 
 
-def generatePolicy(ProbSize):
+def generatePolicy(qTable, ProbSize):
 
     policy = dict()
     utilities = dict()
@@ -79,3 +85,5 @@ def generatePolicy(ProbSize):
 
     printPolicy(policy, ProbSize)
     printUtils(utilities, ProbSize)
+
+    return policy
