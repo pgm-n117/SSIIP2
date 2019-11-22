@@ -214,17 +214,35 @@ class BlackBoxEnvironment:
         print("--")
 
     """EXTRA METHODS"""
-    def printSolution(self, policy):
-        print("Mejor Solución: ")
-        position = (self.initialCarRow, self.initialCarColumn)
-        path = []
-        path.append(position)
-        while (not self.isGoal(position[0], position[1])):
-            position = getNextState(position, policy[position])     #getNextState from auxMethods
-            path.append(position)
 
-        for pos in path:
-            print(str(pos) + ", " + policy[pos])
+    def valueIterationEvaluationPolicy(self, policy, nEvaluations):
+        policyEvaluation = 0.0
+        for i in range(nEvaluations):
+            row = self.initialCarRow
+            column = self.initialCarColumn
+            while (not self.isGoal(row, column)):
+                e = self.applyAction(row, column, policy[(row, column)])
+                row = e[0]
+                column = e[1]
+                policyEvaluation += e[2]
 
+        policyEvaluation = policyEvaluation / nEvaluations
+        print("Utilidad media con " + str(nEvaluations) + " ejecuciones: %.2f" % (policyEvaluation))
+
+    def initQTable(self):
+        qTable = {}
+
+        for i in range(self.dimension):
+            for j in range(self.dimension):
+                qTable.setdefault((i,j), {})
+                if(self.isGoal(i,j)):
+                    qTable[(i, j)].update({"GOAL": self.getReward(i,j)})
+                if(self.maze[i][j] == -1):
+                    qTable[(i, j)].update({"WALL": self.getReward(i, j)})
+                else:
+                    for a in self.getActions():
+                        qTable[(i,j)].update({a:0.0})
+
+        return qTable
 
 

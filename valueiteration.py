@@ -2,8 +2,8 @@
 from blackboxenvironment import *
 from auxMethods import *
 
-global policy         #Diccionario para la política, {pareja estado(x,y), acción}
-global utilities      #Diccionario de utilidades, {pareja estado(x,y), utilidad}
+global policy         #Diccionario para la política, {pareja estado(x,y) : acción}
+global utilities      #Diccionario de utilidades, {pareja estado(x,y) : utilidad}
 
 
 
@@ -12,43 +12,46 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
     nIteration = 0
     policy = dict()
     utilities = dict()
-
-
+    '''
+    Inicializamos la politica inicial (aleatoria) y las utilidades iniciales 
+    (0.0 para todos los casos excepto los estados finales, que tienen su recompensa)
+    '''
     environment = BlackBoxEnvironment(ProbSize, seed, correctProb)
     delta = math.inf
     for i in range(ProbSize):
         for j in range(ProbSize):
-            if(i==ProbSize-1):
-                utilities.update({(i, j): environment.getReward(i,j)})
-            else:
-                utilities.update({(i, j): 0.0})
-
             if(environment.maze[i][j] == -1):
                 policy.update({(i, j): "WALL"})
+                utilities.update({(i, j): 0.0})
             else:
                 if (environment.isGoal(i,j)):
                     policy.update({(i, j): "GOAL"})
+                    utilities.update({(i, j): environment.getReward(i, j)})
                 else:
                     policy.update({(i, j): environment.getActions()[random.randrange(4)]})
+                    utilities.update({(i, j): 0.0})
 
     printPolicy(policy, ProbSize)
     printUtils(utilities, ProbSize)
 
+    '''
+    Algoritmo de iteración de valores
+    '''
     while (delta > convergencia):
 
-
         auxPolicy = policy.copy()
-        auxUtilities = utilities.copy();
+        auxUtilities = utilities.copy()
 
-
-
-        #Para cada estado
-        for key in utilities.keys():
-            if (environment.maze[key[0]][key[1]] != -1 and not(environment.isGoal(key[0],key[1]))):
-                # Auxiliares para cada iteración
+        #Para cada estado:
+        for s in utilities.keys():
+            #Si no es pared y no es un estado final
+            if (environment.maze[s[0]][s[1]] != -1 and not(environment.isGoal(s[0],s[1]))):
+                #Variables auxiliares para cada iteración
                 auxAction = ""
                 auxUtil = -math.inf
-                possibleStates = environment._getNextPositionsByDeterministicAction(key[0], key[1])
+
+                #Obtenemos los posibles estados a los que se puede llegar
+                possibleStates = environment._getNextPositionsByDeterministicAction(s[0], s[1])
 
                 #Para cada acción, si el siguiente estado es el que resulta de nuestra acción -> probabilidad de moverse a la posición correcta * utilidad del destino
                 #Si no, probabilidad de moverse a cualquier otra posición * utilidad del destino
@@ -68,15 +71,17 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
 
 
 
-                auxUtil = environment.getReward(key[0], key[1]) + gamma*auxUtil
+                auxUtil = environment.getReward(s[0], s[1]) + gamma*auxUtil
 
-                #Condición de parada
-                if(abs(auxUtil-utilities[key]) < delta):
-                    delta = abs(auxUtil-utilities[key])
-                    print("Delta: %.5f" % (delta))
 
-                auxPolicy[key] = auxAction
-                auxUtilities[key] = auxUtil
+                auxPolicy[s] = auxAction
+                auxUtilities[s] = auxUtil
+
+        # Condición de parada
+        diff = evalTotalUtilities(utilities, auxUtilities)
+        if (diff < delta):
+            delta = diff
+            print("Delta: %.5f" % (delta))
 
         nIteration +=1
 
@@ -84,11 +89,14 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
         utilities = auxUtilities.copy()
 
 
-    environment.printSolution(policy)
-
     print("Numero de iteraciones: "+ str(nIteration))
     printPolicy(policy, ProbSize)
     printUtils(utilities, ProbSize)
+
+
+    #Final Policy Evaluation:
+    environment.valueIterationEvaluationPolicy(policy, 10000)
+
 
     return 0
 
