@@ -213,7 +213,7 @@ class BlackBoxEnvironment:
         print("-" * n, end='')
         print("--")
 
-    """EXTRA METHODS"""
+    """--------------EXTRA METHODS---------------"""
 
     def policyEvaluation(self, policy, nEvaluations):
         policyEvaluation = 0.0

@@ -14,7 +14,7 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
     (0.0 para todos los casos excepto los estados finales, que tienen su recompensa)
     '''
     environment = BlackBoxEnvironment(ProbSize, seed, correctProb)
-    delta = math.inf
+
     for i in range(ProbSize):
         for j in range(ProbSize):
             if(environment.maze[i][j] == -1):
@@ -36,12 +36,13 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
     Algoritmo de iteración de valores
     '''
     learningTime = time()
-
-    while (delta > convergencia):
+    delta = math.inf
+    stop = False
+    while (not stop):
 
         auxPolicy = policy.copy()
         auxUtilities = utilities.copy()
-
+        diff=0.0
         #Para cada estado:
         for s in utilities.keys():
             #Si no es pared y no es un estado final
@@ -69,19 +70,21 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
                         auxUtil = auxEval
                         auxAction = action
 
-
-
                 auxUtil = environment.getReward(s[0], s[1]) + gamma*auxUtil
-
 
                 auxPolicy[s] = auxAction
                 auxUtilities[s] = auxUtil
 
-        # Condición de parada
-        diff = evalTotalUtilities(utilities, auxUtilities)
-        if (diff < delta):
-            delta = diff
-            #print("Delta: %.5f" % (delta))
+                # Condición de parada
+                auxdiff = abs(auxUtilities[s] - utilities[s])
+                if (auxdiff > diff):
+                    diff = auxdiff
+
+        #Cuando el cambio entre la iateración actual y la anterior sea menor que convergencia (por defecto 0.001), paramos
+        if(abs(delta - diff)<convergencia):
+            stop=True
+        delta = diff
+        print("Delta: %.5f" % (diff))
 
         nIteration +=1
 
@@ -89,6 +92,7 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
         utilities = auxUtilities.copy()
 
     learningTime = time() - learningTime
+
     print("Numero de iteraciones: "+ str(nIteration))
     print("Tiempo de aprendizaje: "+ str(learningTime))
     printPolicy(policy, ProbSize)
