@@ -16,9 +16,11 @@ if __name__ == "__main__":
     '''
     Alpha representa la preferencia de valores q nuevos frente a los antiguos 
         (Alpha = 1 prefiere los nuevos, Alpha = 0 prefiere los antiguos siempre, por lo que no actualiza)
+        El valor por defecto de las practicas es 0.1
         
     Delta representa la condición de parada, (cuanto mas cercano a 0 sea, más precisión) parará cuando la
         diferencia entre la utilidad de la nueva politica y la anterior sea menor que delta 
+        El valor por defecto empleado en las prácticas es 0.001
     '''
     parser.add_argument('alphaDelta', type=float, help='alpha para qLearning / delta para iteración de valores', default=1)
     parser.add_argument('--nIteraciones', type=int, help='iteraciones de qLearning')

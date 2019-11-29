@@ -214,7 +214,7 @@ class BlackBoxEnvironment:
         print("--")
 
     """--------------EXTRA METHODS---------------"""
-
+    """Evaluación de la política obtenida, común para iteración de valores, y qLearning"""
     def policyEvaluation(self, policy, nEvaluations):
         policyEvaluation = 0.0
         for i in range(nEvaluations):
@@ -229,20 +229,5 @@ class BlackBoxEnvironment:
         policyEvaluation = policyEvaluation / nEvaluations
         print("Utilidad media con " + str(nEvaluations) + " ejecuciones: %.2f" % (policyEvaluation))
 
-    def initQTable(self):
-        qTable = {}
-
-        for i in range(self.dimension):
-            for j in range(self.dimension):
-                qTable.setdefault((i,j), {})
-                if(self.isGoal(i,j)):
-                    qTable[(i, j)].update({"GOAL": self.getReward(i,j)})
-                if(self.maze[i][j] == -1):
-                    qTable[(i, j)].update({"WALL": self.getReward(i, j)})
-                else:
-                    for a in self.getActions():
-                        qTable[(i,j)].update({a:0.0})
-
-        return qTable
 
 

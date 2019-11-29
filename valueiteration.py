@@ -96,7 +96,7 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
     print("Numero de iteraciones: "+ str(nIteration))
     print("Tiempo de aprendizaje: "+ str(learningTime))
     printPolicy(policy, ProbSize)
-    printUtils(utilities, ProbSize)
+    #printUtils(utilities, ProbSize)
 
 
     #Final Policy Evaluation:
