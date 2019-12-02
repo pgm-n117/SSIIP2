@@ -4,19 +4,19 @@ from random import *
 from blackboxenvironment import *
 from auxMethods import *
 
-#ProbSize: Tamaño del problema n*n
-#Seed: Semilla para generación de aleatorios
-#correctProb: Probabilidad de elección correcta de la acción
-#alpha: por defecto 0.1, es la preferencia de la nueva solución frente a la anterior
-#gamma: por defecto 1
-#iterations: nº de iteraciones que aplicará el algoritmo para encontrar la política óptima
+#ProbSize:      Tamaño del problema n*n
+#Seed:          Semilla para generación de aleatorios
+#correctProb:   Probabilidad de elección correcta de la acción
+#alpha:         por defecto 0.1, es la preferencia de la nueva solución frente a la anterior
+#gamma:         por defecto 1
+#iterations:    nº de iteraciones que aplicará el algoritmo para encontrar la política óptima
 
 
 def qLearning(ProbSize, seed, correctProb, alpha, gamma, iterations):
     global qT
 
 
-    decaimiento = 0
+    decaimiento = 0     #--MODIFICABLE--
     alphaValue = alpha
     nIteration = 0
 
@@ -45,7 +45,7 @@ def qLearning(ProbSize, seed, correctProb, alpha, gamma, iterations):
 
             #Si random es menor que probabilidad de exploración (por defecto 0.1), elegimos acción aleatoria
             #Si no: Obtenemos la acción con mejor evaluación en el estado actual
-            if(random.random()<0.1):    #Mejora la exploración
+            if(random.random()<0.1):    #Mejora la exploración --MODIFICABLE--
                 action = environment.getActions()[random.randint(0,3)]
                 #Si la acción no fué explorada, la añadimos a la qtabla
                 if(action not in qT.qTable[state].keys()):
@@ -79,6 +79,7 @@ def qLearning(ProbSize, seed, correctProb, alpha, gamma, iterations):
             else:
                 qT.qTable[state][action] = (1 - alphaValue) * qT.qTable[state][action] + alphaValue * (reward + gamma * nextQValue)
 
+            #Actualizamos al siguiente estado para la siguiente iteración
             state = (newState[0], newState[1])
 
         nIteration += 1
@@ -87,9 +88,9 @@ def qLearning(ProbSize, seed, correctProb, alpha, gamma, iterations):
     print("Tiempo de aprendizaje: "+ str(learningTime))
 
     policy = generatePolicy(qT.qTable, ProbSize)
-    environment.policyEvaluation(policy, 10000)
+    evaluation = environment.policyEvaluation(policy, 10000)
 
-    return 0
+    return [evaluation, learningTime]
 
 
 def generatePolicy(qTable, ProbSize):

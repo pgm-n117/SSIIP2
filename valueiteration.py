@@ -2,6 +2,13 @@ from time import time
 from blackboxenvironment import *
 from auxMethods import *
 
+#ProbSize:      Tamaño del problema n*n
+#Seed:          Semilla para generación de aleatorios
+#correctProb:   Probabilidad de elección correcta de la acción
+#gamma:         por defecto 1
+#convergencia:  valor de convergencia de delta para la condición de parada
+
+
 def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
 
     policy = dict()     # Diccionario para la política, {pareja estado(x,y) : acción}
@@ -83,6 +90,7 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
         #Cuando el cambio entre la iateración actual y la anterior sea menor que convergencia (por defecto 0.001), paramos
         if(abs(delta - diff)<convergencia):
             stop=True
+
         delta = diff
         print("Delta: %.5f" % (diff))
 
@@ -96,13 +104,13 @@ def valueIteration(ProbSize, seed, correctProb, gamma, convergencia):
     print("Numero de iteraciones: "+ str(nIteration))
     print("Tiempo de aprendizaje: "+ str(learningTime))
     printPolicy(policy, ProbSize)
-    #printUtils(utilities, ProbSize)
+    printUtils(utilities, ProbSize)
 
 
     #Final Policy Evaluation:
-    environment.policyEvaluation(policy, 10000)
+    evaluation = environment.policyEvaluation(policy, 10000)
 
 
-    return 0
+    return [evaluation, nIteration, learningTime]
 
 

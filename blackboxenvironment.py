@@ -228,6 +228,7 @@ class BlackBoxEnvironment:
 
         policyEvaluation = policyEvaluation / nEvaluations
         print("Utilidad media con " + str(nEvaluations) + " ejecuciones: %.2f" % (policyEvaluation))
+        return policyEvaluation
 
 
 
