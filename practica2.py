@@ -35,10 +35,10 @@ if __name__ == "__main__":
 
 
     if(args.algoritmo=='valueiteration'):
-        from valueiteration import *
+        from Algorithms.valueiteration import *
         solucion = valueIteration(args.n, args.seed, args.pCorrect, args.gamma, args.alphaDelta)
     elif(args.algoritmo=='qlearning'):
-        from qlearning import *
+        from Algorithms.qlearning import *
         solucion = qLearning(args.n, args.seed, args.pCorrect, args.alphaDelta, args.gamma, args.nIteraciones)
 
 

@@ -1,8 +1,9 @@
 from time import time
-from qTableClass import *
+import math
+from Environment.qTableClass import *
 from random import *
-from blackboxenvironment import *
-from auxMethods import *
+from Environment.blackboxenvironment import *
+from Algorithms.auxMethods import *
 
 #ProbSize:      Tamaño del problema n*n
 #Seed:          Semilla para generación de aleatorios

@@ -1,6 +1,3 @@
-import math
-from blackboxenvironment import *
-
 """Métodos auxiliares para la implemetnación de iteración de valores y QLearning"""
 
 def printPolicy(policy, ProbSize):

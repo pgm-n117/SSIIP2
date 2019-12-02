@@ -1,6 +1,7 @@
+import math
 from time import time
-from blackboxenvironment import *
-from auxMethods import *
+from Environment.blackboxenvironment import *
+from Algorithms.auxMethods import *
 
 #ProbSize:      Tamaño del problema n*n
 #Seed:          Semilla para generación de aleatorios

@@ -1,8 +1,7 @@
 from time import time
 import os
 import random
-import qlearning
-import valueiteration
+from Algorithms import qlearning, valueiteration
 
 tiempoInicio = None
 tiempoFin = None
